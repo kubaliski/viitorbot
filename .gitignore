@@ -1,0 +1,30 @@
+# Archivo .env con variables sensibles
+.env
+
+# Binarios compilados
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+viitorbot
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Archivos de log
+*.log
+
+# Directorios de dependencias
+/vendor/
+
+# Archivos específicos del IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
