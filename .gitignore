@@ -28,3 +28,5 @@ viitorbot
 # Archivos de sistema operativo
 .DS_Store
 Thumbs.db
+
+coverage.out

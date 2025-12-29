@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/kubaliski/golog/pkg/logger"
@@ -74,7 +75,39 @@ func (h *Handlers) HandleMessage(s SessionAdapter, m *discordgo.MessageCreate) {
 // BuildResponse composes the reply for a given message content. Returns empty string when
 // message does not trigger a response. This is separated for easier testing.
 func (h *Handlers) BuildResponse(ctx context.Context, content string) (string, error) {
-	if strings.Contains(strings.ToLower(content), "viitorbot hazlotuyo") {
+	lc := strings.ToLower(content)
+
+	// detect date keywords/formats
+	if dt, ok := parseDateFromContent(lc); ok {
+		// Log the detected date for observability/debugging
+		if h.lg != nil {
+			h.lg.Log(ctx, "INFO", fmt.Sprintf("Detected date %s from content: %q", dt.Format("2006-01-02"), content))
+		}
+		title, extract, url, evidence, err := h.wiki.GetRandomArticleByDate(dt)
+		if err != nil {
+			// fallback to random article
+			title, extract, url, err = h.wiki.GetRandomArticle()
+			if err != nil {
+				return "", fmt.Errorf("error obtener artículo: %w", err)
+			}
+		} else {
+			// include evidence when available
+			if evidence != nil {
+				// log the evidence for debugging
+				if h.lg != nil {
+					h.lg.Log(ctx, "INFO", fmt.Sprintf("Evidence for selected item: type=%s year=%d text=%s", evidence.Type, evidence.Year, evidence.Text))
+				}
+			}
+		}
+		response := fmt.Sprintf("**%s**\n\n%s\n\nMás información: %s", title, extract, url)
+		if evidence != nil {
+			// append short provenance
+			response = response + fmt.Sprintf("\n\nEvidencia: %s (%d) — %s", evidence.Type, evidence.Year, evidence.Text)
+		}
+		return response, nil
+	}
+
+	if strings.Contains(lc, "viitorbot hazlotuyo") {
 		title, extract, url, err := h.wiki.GetRandomArticle()
 		if err != nil {
 			return "", fmt.Errorf("error obtener artículo: %w", err)
@@ -83,4 +116,35 @@ func (h *Handlers) BuildResponse(ctx context.Context, content string) (string, e
 		return response, nil
 	}
 	return "", nil
+}
+
+// parseDateFromContent attempts to find a date in common formats; returns the parsed time in local timezone.
+func parseDateFromContent(s string) (time.Time, bool) {
+	s = strings.TrimSpace(s)
+	// keywords
+	if strings.Contains(s, "hoy") {
+		return time.Now(), true
+	}
+	if strings.Contains(s, "ayer") {
+		return time.Now().AddDate(0, 0, -1), true
+	}
+	if strings.Contains(s, "mañana") || strings.Contains(s, "manana") {
+		return time.Now().AddDate(0, 0, 1), true
+	}
+
+	// try YYYY-MM-DD
+	if t, err := time.Parse("2006-01-02", s); err == nil {
+		return t, true
+	}
+	// try DD/MM/YYYY
+	if t, err := time.Parse("02/01/2006", s); err == nil {
+		return t, true
+	}
+	// try DD-MM-YYYY
+	if t, err := time.Parse("02-01-2006", s); err == nil {
+		return t, true
+	}
+
+	// Not found
+	return time.Time{}, false
 }

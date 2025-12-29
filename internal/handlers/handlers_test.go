@@ -5,6 +5,9 @@ import (
 	"errors"
 	"strings"
 	"testing"
+	"time"
+
+	"viitorbot/internal/wiki"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/kubaliski/golog/pkg/logger"
@@ -16,10 +19,18 @@ func (f *fakeWiki) GetRandomArticle() (string, string, string, error) {
 	return "T", "E", "https://example.org/t", nil
 }
 
+func (f *fakeWiki) GetRandomArticleByDate(t time.Time) (string, string, string, *wiki.Evidence, error) {
+	return "DT", "DE", "https://example.org/dt", &wiki.Evidence{Type: "event", Year: 2020, Text: "Evento de prueba"}, nil
+}
+
 type fakeWikiErr struct{}
 
 func (f *fakeWikiErr) GetRandomArticle() (string, string, string, error) {
 	return "", "", "", errors.New("upstream")
+}
+
+func (f *fakeWikiErr) GetRandomArticleByDate(t time.Time) (string, string, string, *wiki.Evidence, error) {
+	return "", "", "", nil, errors.New("upstream")
 }
 
 func TestBuildResponse(t *testing.T) {
