@@ -23,6 +23,9 @@ WORKDIR /app
 # Copy binary from builder
 COPY --from=builder /app/viitorbot .
 
+# Copy .env
+COPY .env .
+
 # Create non-root user
 RUN addgroup -g 1000 viitor && \
     adduser -D -u 1000 -G viitor viitor && \
