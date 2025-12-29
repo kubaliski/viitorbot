@@ -57,6 +57,32 @@ viitorbot hazlotuyo
 
 El bot responderá con un artículo aleatorio de Wikipedia.
 
+## Búsqueda por fecha
+
+Además de devolver artículos aleatorios, el bot admite búsquedas relacionadas con una fecha. Si el mensaje contiene una referencia temporal, el bot intentará obtener un artículo relacionado con ese día (usando el feed "On this day" de Wikipedia) y añadirá evidencia sobre por qué el artículo está relacionado con la fecha.
+
+Soportes de fecha reconocidos:
+
+- Palabras clave: `hoy`, `ayer`, `mañana` (también `manana`).
+- Formatos de fecha: `YYYY-MM-DD`, `DD/MM/YYYY`, `DD-MM-YYYY`.
+
+Ejemplos de uso:
+
+```
+viitorbot hazlotuyo hoy
+viitorbot hazlotuyo 2025-12-30
+viitorbot hazlotuyo 30/12/2025
+```
+
+Qué devuelve el bot cuando se detecta una fecha:
+
+- Título del artículo
+- Extracto corto
+- Enlace al artículo en Wikipedia
+- Evidencia (provenance) extra: tipo (evento/nacimiento/muerte/fiesta), año y texto descriptivo del ítem del feed
+
+La evidencia te ayuda a verificar automáticamente por qué el artículo está asociado a esa fecha (por ejemplo, porque en esa fecha ocurrió un evento histórico, nació alguien, etc.).
+
 ## Licencia
 
 [MIT](LICENSE)

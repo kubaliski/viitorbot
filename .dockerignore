@@ -1,0 +1,8 @@
+.git
+.gitignore
+*.md
+coverage.out
+*.test
+.vscode
+.idea
+Makefile

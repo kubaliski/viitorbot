@@ -1,0 +1,14 @@
+services:
+  viitorbot:
+    build: .
+    container_name: viitorbot
+    restart: always
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - TZ=Europe/Madrid
+    networks:
+      - viitorbot-net
+
+networks:
+  viitorbot-net:
+    driver: bridge

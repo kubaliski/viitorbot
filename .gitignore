@@ -7,7 +7,6 @@
 *.dll
 *.so
 *.dylib
-viitorbot
 
 # Archivos temporales
 *.tmp
@@ -28,3 +27,5 @@ viitorbot
 # Archivos de sistema operativo
 .DS_Store
 Thumbs.db
+
+coverage.out
