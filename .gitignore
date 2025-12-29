@@ -7,7 +7,6 @@
 *.dll
 *.so
 *.dylib
-viitorbot
 
 # Archivos temporales
 *.tmp
